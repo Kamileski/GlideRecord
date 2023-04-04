@@ -1,0 +1,65 @@
+//A standard GlideRecord query follows this format.
+
+var gr = new GlideRecord('incident'); //Indicate the table to query from
+//The 'addQuery' line allows you to restrict the query to the field/value pairs specified (optional)
+//gr.addQuery('active', true);
+gr.query(); //Execute the query
+while (gr.next()) { //While the recordset contains records, iterate through them
+//Do something with the records returned
+if(gr.category == 'software'){
+gs.log('Category is ' + gr.category);
+}
+}
+
+// ‘Get’ Query Shortcut (used to get a single GlideRecord)
+var gr = new GlideRecord('incident');
+gr.get(sys_id_of_record_here);
+//Do something with the record returned
+if(gr.category == 'software'){
+gs.log('Category is ' + gr.category);
+}
+
+//Find the first active incident record
+var gr = new GlideRecord('incident');
+if(gr.get('active', true)){
+//Do something with the record returned
+gs.log('Category is ' + gr.category);
+}
+
+//Find all incidents with a priority of 1 or 2
+var gr = new GlideRecord('incident');
+var grOR = gr.addQuery('priority', 1);
+grOR.addOrCondition('priority', 2);
+gr.query();
+while (gr.next()) {
+//Do something with the records returned
+if(gr.category == 'software'){
+gs.log('Category is ' + gr.category);
+}
+}
+
+//Create a new Incident record and populate the fields with the values below
+var gr = new GlideRecord('incident');
+gr.initialize();
+gr.short_description = 'Network problem';
+gr.category = 'software';
+gr.caller_id.setDisplayValue('Joe Employee');
+gr.insert(); 
+
+//Find all inactive incident records and delete them one-by-one
+var gr = new GlideRecord('incident');
+gr.addQuery('active',false);
+gr.query();
+while (gr.next()) {
+//Delete each record in the query result set
+gr.deleteRecord();
+}
+
+//Find all active incidents where the category is software or hardware addEncodedQuery
+
+var gr = new GlideRecord('incident');
+var strQuery = 'active=true';
+strQuery = strQuery + '^category=software';
+strQuery = strQuery + '^ORcategory=hardware';
+gr.addEncodedQuery(strQuery);
+gr.query();
